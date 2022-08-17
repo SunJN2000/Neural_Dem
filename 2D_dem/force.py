@@ -14,12 +14,7 @@ from jax import random
 key = random.PRNGKey(3232323)
 boundary_space = jnp.asarray([10,10],dtype = f32) 
 
-R_list = np.zeros((100,3),dtype = f32)
-for i in range(100):
-    x = jnp.floor(i/10) 
-    y = i%10
-    R_list[i][0] = x+0.5
-    R_list[i][1] = y+0.5
+
 
 
 def get_reaction(index1:i32,index2:i32,p_batch:Array):
@@ -54,7 +49,7 @@ def get_force_list(p_batch,k:float = 0.1):
 	f_list=batch_get_reaction_2(id_list,neighour_list,p_batch)*k
 	f_list = jnp.sum(f_list,axis = 1)
 	return f_list
-	
+#vmap to get force_batched	
 def get_energy_list(index1:i32,index2:i32,p_batch:Array):
     
     n_objects = p_batch.shape[0]
@@ -86,7 +81,7 @@ def get_v_list(p_batch,k:float = 0.1):
     e_list=batch_get_e_2(id_list,neighour_list,p_batch)*k*0.25
     e_list = jnp.sum(e_list)
     return e_list
-
+#vmap to get energy_batched
 
 def get_reaction_of_wall(p,k = 100):
     x_list = p[0]
@@ -131,7 +126,7 @@ def get_v_of_wall(p_batch):
     return vmap(get_e_wall)(p_batch)
     
     
-
+#get the batched_force of the wall
     
     
     
