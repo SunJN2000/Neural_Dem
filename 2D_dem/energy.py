@@ -7,12 +7,12 @@ from partition import prune_neighbour_list
 import math
 pi = math.pi
 i32 = jnp.int32
-f32 = jnp.float32
+f32 = jnp.float64
 Array = jnp.ndarray
 from jax import random
 key = random.PRNGKey(3232323)
 boundary_space = jnp.asarray([10,10],dtype = f32) 
-
+#粒子所在的空间范围
 vv = lambda x, y: jnp.dot(x, y)
 v_dot = vmap(vv, (0, 0), 0)
 
@@ -23,7 +23,8 @@ def rotation(q,r_batch):
 	Tr_batch = jnp.transpose(Tr_batch,axes=(1,0))
 
 	return Tr_batch
-	
+#旋转矩阵，我怀疑就是这一步有单双精度带来的误差，因为角度取到2pi时，与角度为0时的矩阵不一样
+
 
 def get_energy(p_1:Array,p_2:Array,phy_seed:Array = phy_seed,k_n:f32 = 0.5*0.04375):
     q_1 = p_1[2]
@@ -56,12 +57,12 @@ def get_energy(p_1:Array,p_2:Array,phy_seed:Array = phy_seed,k_n:f32 = 0.5*0.043
     
     vol = vol_1 + vol_2
     return vol[0]
-
+#计算能量
 
 def get_force(p_1,p_2):
     r_force = -grad(get_energy,argnums=0)(p_1,p_2)
     return r_force
-
+#计算力，方法就是对绝对坐标求导
 def get_energy_bound(p:Array,k:float = 1e2,bound_space:Array = boundary_space):
     x = p[0]
     y = p[1]
@@ -77,6 +78,7 @@ def get_force_wall(p):
     r_force = -grad(get_energy_bound,argnums=0)(p)
     return r_force
    
+#以上为计算墙壁作用力，k为弹性系数
     
     
     
