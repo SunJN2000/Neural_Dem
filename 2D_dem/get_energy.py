@@ -18,6 +18,7 @@ with open('test_y.npy', 'rb') as f:
     y = jnp.load(f)
 
 v_list = []
+#这里的100000是dynamic里面的循环数
 for i in range(100000):
     if (i%1000 ==0):
         print(i)
